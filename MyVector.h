@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma warning(disable : 4018)
-
+#pragma warning(disable : 6386)
 
 template<typename _T>
 class MyVector
@@ -22,8 +22,8 @@ public:
 	MyVector(const size_t& size_) 
 		try :
 		size(size_),
-		capacity(size_),
-		array(new _T[size_])
+		capacity(size_ + 10),
+		array(new _T[capacity])
 	{} catch (...) { delete[] this->array; throw; }
 
 	MyVector(const MyVector& vector) 
@@ -54,7 +54,11 @@ public:
 			return *this;
 		MyVector temp(other.size);
 		temp.capacity = other.capacity;
-		std::copy(other.array, other.array + other.size, temp.array);
+		
+		for (unsigned int i = 0; i < other.size; ++i)
+		{
+			temp.array[i] = other.array[i];
+		}
 
 		delete[] this->array;
 		this->capacity = temp.capacity;
@@ -114,23 +118,24 @@ public:
 	{
 		return this->capacity;
 	}
-	void push_back(const _T& element) // крч, нужно массив заполнить залупой всякой, тогда всё ок будет.
+	void push_back(const _T& element)
 	{
 		if (this->size + 1 <= this->capacity)
 		{
-			this->array[this->size++] = element;
+			this->size++;
+			this->array[this->size - 1] = element;
 			return;
 		}
-		MyVector<_T> new_vector(this->capacity + 50); 
-		new_vector.size = this->size + 1;
+		MyVector<_T> new_vector(this->size + 10); // add some capacity
+		new_vector.size -= 9;
 		for (unsigned int i = 0; i < this->size; ++i)
 		{
 			new_vector[i] = this->array[i];
 		}
-		new_vector.array[this->size] = element; 
+		new_vector.array[new_vector.size - 1] = element;
 		delete[] this->array;
 		this->array = new_vector.array;
-		this->size = new_vector.size++;
+		this->size = new_vector.size;
 		this->capacity = new_vector.capacity;
 		new_vector.array = nullptr;
 	}
@@ -143,8 +148,9 @@ public:
 	}
 	void erase(const int& index)
 	{
-		if (index > size || index < 0)
+		if (index >= this->size || index < 0)
 			throw std::out_of_range("out of range");
+
 		for (int i = index; i < this->size - 1; ++i) 
 		{
 			std::swap(this->array[i], this->array[i + 1]);
@@ -153,11 +159,20 @@ public:
 	}
 	void erase(const MyVectorIterator& iterator)
 	{
+		if (&iterator > &(this->array[this->size]) || &iterator < this->array)
+		{
+			throw std::out_of_range("out of range");
+		}
 		for (unsigned int i = 0; i < this->size - 1; ++i)
 		{
-			if (&(this->array[i]) == &iterator)
+			if (&iterator == &(this->array[i]))
 			{
-				std::swap(this->array[i], this->array[i + 1]);
+				for (unsigned int j = i; j < this->size - 1; ++j)
+				{
+					std::swap(this->array[j], this->array[j + 1]);
+				}
+				this->size--;
+				return;
 			}
 		}
 		this->size--;
@@ -174,27 +189,27 @@ public:
 
 	MyVectorIterator end() const
 	{
-		return MyVectorIterator(this->array + this->size);
+		return --MyVectorIterator(this->array + this->size);
 	}
-	/*
+
 	void insert(const _T& value, const int& index)
 	{
-		if (index < 0 || index > this->size)
+		if (index < 0 || index >= this->size)
 			throw std::out_of_range("out of range");
 
 		if (this->size + 1 <= this->capacity)
 		{
+			this->size++;
 			for (int i = this->size - 1; i != 0; --i)
 			{
 				if (i == index)
 				{
 					this->array[i] = value;
-					this->size++;
 					break;
 				}
 				else
 				{
-					this->array[i] = this->array[i - 1];
+					std::swap(this->array[i], this->array[i-1]);
 				}
 			}
 		}
@@ -203,21 +218,26 @@ public:
 			MyVector new_vector(this->size + 1);
 			for (unsigned int i = 0, j = 0; i < this->size + 1; ++i)
 			{
-				if (i != index)
-				{
-					new_vector.array[j] = this->array[i];
-				}
-				else
+				if (i == index)
 				{
 					new_vector.array[j] = value;
 					j++;
 					new_vector.array[j] = this->array[i];
 				}
+				else
+				{
+					new_vector.array[j] = this->array[i];
+				}
 				j++;
 			}
+			delete[] this->array;
+			this->array = new_vector.array;
+			this->size = new_vector.size;
+			this->capacity = new_vector.capacity;
+			new_vector.array = nullptr;
 		}
 	}
-	*/
+
 	void shrink_to_fit()
 	{
 		if (this->size == this->capacity)
@@ -241,7 +261,7 @@ public:
 	}
 	void resize(const int& _value)
 	{
-		if (_value <= this->size)
+		if (_value <= this->capacity)
 		{
 			this->size = _value;
 			return;
@@ -250,7 +270,7 @@ public:
 		try {
 			for (unsigned int i = 0; i < this->size; ++i)
 			{
-				new_vector[i] = this->array[i];
+				new_vector.array[i] = this->array[i];
 			}
 		}
 		catch (...)
@@ -258,13 +278,12 @@ public:
 			delete[] new_vector.array;
 			throw;
 		}
-		this->size = _value;
-		this->capacity = _value;
+		this->size = new_vector.array;
+		this->capacity = new_vector.capacity;
 		delete[] this->array;
 		this->array = new_vector.array;
 		new_vector.array = nullptr;
 	}
-
 
 	class MyVectorIterator
 	{
