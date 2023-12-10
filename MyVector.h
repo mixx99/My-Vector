@@ -24,7 +24,7 @@ public:
 		size(size_),
 		capacity(size_ + 10),
 		array(new _T[capacity])
-	{} catch (...) { delete[] this->array; throw; }
+	{} catch (...) { delete[] array; throw; }
 
 	MyVector(const MyVector& vector) 
 		try : 
@@ -34,17 +34,17 @@ public:
 	{
 		for (unsigned int i = 0; i < this->size; ++i)
 		{
-			this->array[i] = vector.array[i];
+			array[i] = vector.array[i];
 		}
 	
-	} catch (...) { delete[] this->array; throw; }
+	} catch (...) { delete[] array; throw; }
 
 	MyVector(MyVector&& other) 
 	{
-		this->size = other.size;
-		this->capacity = other.capacity;
-		delete[] this->array;
-		this->array = other.array;
+		size = other.size;
+		capacity = other.capacity;
+		delete[] array;
+		array = other.array;
 		other.array = nullptr;
 	}
 
@@ -60,10 +60,10 @@ public:
 			temp.array[i] = other.array[i];
 		}
 
-		delete[] this->array;
-		this->capacity = temp.capacity;
-		this->size = temp.size;
-		this->array = temp.array;
+		delete[] array;
+		capacity = temp.capacity;
+		size = temp.size;
+		array = temp.array;
 		temp.array = nullptr;
 		return *this;
 	}
@@ -72,10 +72,10 @@ public:
 	{
 		if (this == &other)
 			return *this;
-		delete[] this->array;
-		this->array = other.array;
-		this->size = other.size;
-		this->capacity = other.capacity;
+		delete[] array;
+		array = other.array;
+		size = other.size;
+		capacity = other.capacity;
 		other.array = nullptr;
 	}
 
@@ -88,7 +88,7 @@ public:
 public: 
 	_T& operator[] (const int& index) const
 	{
-		if (index >= this->size || index < 0)
+		if (index >= size || index < 0)
 			throw std::out_of_range("out of range"); 
 		return array[index];
 	}
@@ -96,11 +96,11 @@ public:
 	{
 		if (this == &vector)
 			return true;
-		if (this->size != vector.size)
+		if (size != vector.size)
 			return false;
-		for (unsigned int i = 0; i < this->size; ++i)
+		for (unsigned int i = 0; i < size; ++i)
 		{
-			if (this->array[i] != vector.array[i])
+			if (array[i] != vector.array[i])
 				return false;
 		}
 		return true;
@@ -112,141 +112,141 @@ public:
 public: 
 	size_t get_size() const
 	{
-		return this->size;
+		return size;
 	}
 	size_t get_capacity() const
 	{
-		return this->capacity;
+		return capacity;
 	}
 	void push_back(const _T& element)
 	{
-		if (this->size + 1 <= this->capacity)
+		if (size + 1 <= capacity)
 		{
-			this->size++;
-			this->array[this->size - 1] = element;
+			size++;
+			array[size - 1] = element;
 			return;
 		}
-		MyVector<_T> new_vector(this->size + 10); // add some capacity
+		MyVector<_T> new_vector(size + 10); // add some capacity
 		new_vector.size -= 9;
-		for (unsigned int i = 0; i < this->size; ++i)
+		for (unsigned int i = 0; i < size; ++i)
 		{
-			new_vector[i] = this->array[i];
+			new_vector[i] = array[i];
 		}
 		new_vector.array[new_vector.size - 1] = element;
-		delete[] this->array;
-		this->array = new_vector.array;
-		this->size = new_vector.size;
-		this->capacity = new_vector.capacity;
+		delete[] array;
+		array = new_vector.array;
+		size = new_vector.size;
+		capacity = new_vector.capacity;
 		new_vector.array = nullptr;
 	}
 	void pop_back()
 	{
-		if (this->size > 0)
-			this->size--;
+		if (size > 0)
+			size--;
 		else
 			throw std::out_of_range("out of range");
 	}
 	void erase(const int& index)
 	{
-		if (index >= this->size || index < 0)
+		if (index >= size || index < 0)
 			throw std::out_of_range("out of range");
 
-		for (int i = index; i < this->size - 1; ++i) 
+		for (int i = index; i < size - 1; ++i) 
 		{
-			std::swap(this->array[i], this->array[i + 1]);
+			std::swap(array[i], array[i + 1]);
 		}
-		this->size--;
+		size--;
 	}
 	void erase(const MyVectorIterator& iterator)
 	{
-		if (&iterator > &(this->array[this->size]) || &iterator < this->array)
+		if (&iterator > &(array[size]) || &iterator < array)
 		{
 			throw std::out_of_range("out of range");
 		}
-		for (unsigned int i = 0; i < this->size - 1; ++i)
+		for (unsigned int i = 0; i < size - 1; ++i)
 		{
-			if (&iterator == &(this->array[i]))
+			if (&iterator == &(array[i]))
 			{
-				for (unsigned int j = i; j < this->size - 1; ++j)
+				for (unsigned int j = i; j < size - 1; ++j)
 				{
-					std::swap(this->array[j], this->array[j + 1]);
+					std::swap(array[j], array[j + 1]);
 				}
-				this->size--;
+				size--;
 				return;
 			}
 		}
-		this->size--;
+		size--;
 	}
 	void clear()
 	{
-		this->size = 0;
+		size = 0;
 	}
 
 	MyVectorIterator begin() const
 	{
-		return MyVectorIterator(this->array);
+		return MyVectorIterator(array);
 	}
 
 	MyVectorIterator end() const
 	{
-		return --MyVectorIterator(this->array + this->size);
+		return --MyVectorIterator(array + size);
 	}
 
 	void insert(const _T& value, const int& index)
 	{
-		if (index < 0 || index >= this->size)
+		if (index < 0 || index >= size)
 			throw std::out_of_range("out of range");
 
-		if (this->size + 1 <= this->capacity)
+		if (size + 1 <= capacity)
 		{
-			this->size++;
-			for (int i = this->size - 1; i != 0; --i)
+			size++;
+			for (int i = size - 1; i != 0; --i)
 			{
 				if (i == index)
 				{
-					this->array[i] = value;
+					array[i] = value;
 					break;
 				}
 				else
 				{
-					std::swap(this->array[i], this->array[i-1]);
+					std::swap(array[i], array[i-1]);
 				}
 			}
 		}
 		else
 		{
-			MyVector new_vector(this->size + 1);
-			for (unsigned int i = 0, j = 0; i < this->size + 1; ++i)
+			MyVector new_vector(size + 1);
+			for (unsigned int i = 0, j = 0; i < size + 1; ++i)
 			{
 				if (i == index)
 				{
 					new_vector.array[j] = value;
 					j++;
-					new_vector.array[j] = this->array[i];
+					new_vector.array[j] = array[i];
 				}
 				else
 				{
-					new_vector.array[j] = this->array[i];
+					new_vector.array[j] = array[i];
 				}
 				j++;
 			}
-			delete[] this->array;
-			this->array = new_vector.array;
-			this->size = new_vector.size;
-			this->capacity = new_vector.capacity;
+			delete[] array;
+			array = new_vector.array;
+			size = new_vector.size;
+			capacity = new_vector.capacity;
 			new_vector.array = nullptr;
 		}
 	}
 
 	void shrink_to_fit()
 	{
-		if (this->size == this->capacity)
+		if (size == capacity)
 			return;
-		MyVector<_T> new_vector (this->size);
+		MyVector<_T> new_vector (size);
 		try {
-			for (unsigned int i = 0; i < this->size; ++i)
+			for (unsigned int i = 0; i < size; ++i)
 			{
-				new_vector.array[i] = this->array[i];
+				new_vector.array[i] = array[i];
 			}
 		}
 		catch (...)
@@ -254,23 +254,23 @@ public:
 			delete[] new_vector.array;
 			throw;
 		}
-		this->capacity = this->size;
-		delete[] this->array;
-		this->array = new_vector.array;
+		capacity = size;
+		delete[] array;
+		array = new_vector.array;
 		new_vector.array = nullptr;
 	}
 	void resize(const int& _value)
 	{
-		if (_value <= this->capacity)
+		if (_value <= capacity)
 		{
-			this->size = _value;
+			size = _value;
 			return;
 		}
 		MyVector<_T> new_vector(_value);
 		try {
-			for (unsigned int i = 0; i < this->size; ++i)
+			for (unsigned int i = 0; i < size; ++i)
 			{
-				new_vector.array[i] = this->array[i];
+				new_vector.array[i] = array[i];
 			}
 		}
 		catch (...)
@@ -278,10 +278,10 @@ public:
 			delete[] new_vector.array;
 			throw;
 		}
-		this->size = new_vector.array;
-		this->capacity = new_vector.capacity;
-		delete[] this->array;
-		this->array = new_vector.array;
+		size = new_vector.array;
+		capacity = new_vector.capacity;
+		delete[] array;
+		array = new_vector.array;
 		new_vector.array = nullptr;
 	}
 
@@ -300,32 +300,32 @@ public:
 	public:
 		_T& operator*() const
 		{
-			return *(this->current);
+			return *(current);
 		}
 		_T* operator&() const
 		{
-			return this->current;
+			return current;
 		}
 		MyVectorIterator operator++() // prefix
 		{
-			this->current++;
+			current++;
 			return *this;
 		}
 		MyVectorIterator operator++(int) // postfix
 		{
 			MyVectorIterator temp = *this;
-			this->current++;
+			current++;
 			return temp;
 		}
 		MyVectorIterator operator--() // prefix
 		{
-			this->current--;
+			current--;
 			return *this;
 		}
 		MyVectorIterator operator--(int) // postfix
 		{
 			MyVectorIterator temp = *this;
-			this->current--;
+			current--;
 			return temp;
 		}
 	};
