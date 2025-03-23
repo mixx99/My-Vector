@@ -6,6 +6,7 @@
 template<typename _T>
 class MyVector
 {
+public:
 	class MyVectorIterator;
 private:
 	size_t size;
@@ -126,7 +127,7 @@ public:
 			array[size - 1] = element;
 			return;
 		}
-		MyVector<_T> new_vector(size + 10); // add some capacity
+		MyVector<_T> new_vector(size + 10); 
 		new_vector.size -= 9;
 		for (unsigned int i = 0; i < size; ++i)
 		{
@@ -291,38 +292,33 @@ public:
 		_T* current;
 	public:
 		MyVectorIterator()
-			:
-			current(nullptr)
-		{}
+			: current(nullptr) {}
+
 		MyVectorIterator(_T* _pointer)
-			:
-			current(_pointer) {}
+      : current(_pointer) {}
+
 	public:
-		_T& operator*() const
-		{
-			return *(current);
-		}
-		_T* operator&() const
-		{
-			return current;
-		}
-		MyVectorIterator operator++() // prefix
+		_T& operator*() const { return *(current); }
+		_T* operator&() const{ return current; }
+
+		MyVectorIterator operator++() 
 		{
 			current++;
 			return *this;
 		}
-		MyVectorIterator operator++(int) // postfix
+
+		MyVectorIterator operator++(int) 
 		{
 			MyVectorIterator temp = *this;
 			current++;
 			return temp;
 		}
-		MyVectorIterator operator--() // prefix
+		MyVectorIterator operator--() 
 		{
 			current--;
 			return *this;
 		}
-		MyVectorIterator operator--(int) // postfix
+		MyVectorIterator operator--(int) 
 		{
 			MyVectorIterator temp = *this;
 			current--;
