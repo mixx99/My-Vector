@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdexcept>
 #pragma warning(disable : 4018)
 #pragma warning(disable : 6386)
 
@@ -127,13 +127,13 @@ public:
 			array[size - 1] = element;
 			return;
 		}
-		MyVector<_T> new_vector(size + 10); 
-		new_vector.size -= 9;
+		MyVector<_T> new_vector(size * 2); 
+    new_vector.size = size + 1;
 		for (unsigned int i = 0; i < size; ++i)
 		{
 			new_vector[i] = array[i];
 		}
-		new_vector.array[new_vector.size - 1] = element;
+		new_vector[size] = element;
 		delete[] array;
 		array = new_vector.array;
 		size = new_vector.size;

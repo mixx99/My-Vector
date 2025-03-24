@@ -21,8 +21,8 @@ while a <= TEST_NUMBER do
   a += 1
   file.close() 
 end
-puts "All the tests ready. Starting the program\n"
-
+puts "\n\nAll the tests ready. Starting the program\n\n"
+system("g++ main.cpp test.cpp -O2")
 a = 1
 all_tests_passed = true
 is_test_passed = true
@@ -32,15 +32,15 @@ while a <= TEST_NUMBER do
     is_test_passed = false
   end
   if(is_test_passed == true)
-    puts("Test ##{a} passed!")
+    puts("Test ##{a} passed!\n\n")
   else
-    puts("Test ##{a} FAILED!")
+    puts("Test ##{a} FAILED!\n\n")
   end
   is_test_passed = true
   a += 1
 end
 if(all_tests_passed == true)
-  puts("All the tests completed succesfully!")
+  puts("All the tests completed succesfully!\n\n")
 else
-  puts("Some tests failed!")
+  puts("Some tests failed!\n\n")
 end
