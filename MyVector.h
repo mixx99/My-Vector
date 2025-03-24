@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <cstring>
 #pragma warning(disable : 4018)
 #pragma warning(disable : 6386)
 
@@ -200,19 +201,9 @@ public:
 
 		if (size + 1 <= capacity)
 		{
-			size++;
-			for (int i = size - 1; i != 0; --i)
-			{
-				if (i == index)
-				{
-					array[i] = value;
-					break;
-				}
-				else
-				{
-					std::swap(array[i], array[i-1]);
-				}
-			}
+      std::memmove(array + index + 1, array + index, (size - index) * sizeof(_T));
+      array[index] = value;
+      size++;
 		}
 		else
 		{
