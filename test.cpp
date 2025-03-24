@@ -4,20 +4,23 @@
 
 namespace 
 {
-  int* arr = nullptr;
+  std::vector<int> arr;
   int n;
   void input()
   {
     std::cin >> n;
-    arr = new int[n];
     for(int i = 0; i < n; ++i)
-      std::cin >> arr[i];
+    {
+      int temp;
+      std::cin >> temp;
+      arr.push_back(temp);
+    }
   }
 }
 
 void test_push_back(MyVector<int>& myvector, std::vector<int>& vector)
 {
-  if(arr == nullptr)
+  if(arr.size() == 0)
     input();
   timespec t1, t2;
   double t;
@@ -39,34 +42,29 @@ void test_push_back(MyVector<int>& myvector, std::vector<int>& vector)
   simple_gettime(&t2);
   t = diff(t1, t2);
   std::cout << "  std::vector finished at: " << t << " seconds" << std::endl;
-  //delete[] arr; // ??
 }
 
 
 void test_insert(MyVector<int>& myvector, std::vector<int>& vector)
 {
+  if(arr.size() == 0)
+    input();
+  const int NUMBERS_TO_INSERT = 100;
   timespec t1, t2;
   double t;
-  if(myvector.get_size() != n - 1 || vector.size() != n - 1)
-  {
-    for(int i = 0; i < n; ++i)
-    {
-      vector.push_back(arr[i]);
-      myvector.push_back(arr[i]);
-    }
-  }
-  std::cout << "Testing insert. 1000 times N = " << n << std::endl;
+
+  std::cout << "Testing insert. Insert " << NUMBERS_TO_INSERT << " numbers." << std::endl;
   std::cout << "  Sizeof vectors = " << myvector.get_size() << std::endl;
 
   simple_gettime(&t1);
-  for(int i = 0; i < n / 100000; ++i)
-    myvector.insert(arr[i], arr[i] % n);
+  for(int i = 0; i < NUMBERS_TO_INSERT; ++i)
+    myvector.insert(arr[i], arr[i] % myvector.get_size());
   simple_gettime(&t2);
   t = diff(t1, t2);
-  std::cout << "  myvector finished at: " << t << " seconds" << std::endl;
+  std::cout << "  MyVector finished at: " << t << " seconds" << std::endl;
 
   simple_gettime(&t1);
-  for(int i = 0; i < n / 100000; ++i)
+  for(int i = 0; i < NUMBERS_TO_INSERT; ++i)
   {
     auto it = vector.begin();
     for(int j = 0; j < arr[i] % n; ++j)
@@ -76,8 +74,7 @@ void test_insert(MyVector<int>& myvector, std::vector<int>& vector)
   simple_gettime(&t2);
 
   t = diff(t1, t2);
-  std::cout << "  std::vector finished at :" << t << "seconds" << std::endl;
-  delete[] arr;
+  std::cout << "  std::vector finished at :" << t << " seconds" << std::endl;
 }
 
 

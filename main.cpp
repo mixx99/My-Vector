@@ -10,5 +10,7 @@ int main()
   std::vector<int> vector;
   
   test_push_back(myvector, vector);
+  test_insert(myvector, vector);
+  //int* a = new int;
   return 0;
 }
