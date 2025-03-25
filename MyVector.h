@@ -5,7 +5,7 @@
 #pragma warning(disable : 6386)
 
 template<typename _T>
-class MyVector
+class MyVector final
 {
 public:
 	class MyVectorIterator;

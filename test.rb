@@ -42,7 +42,7 @@ while a <= TEST_NUMBER do
   file.close() 
 end
 puts "\n\nAll the tests ready. Starting the program\n\n"
-system("g++ main.cpp test.cpp -O2") #TODO make here
+system("make")
 a = 1
 all_tests_passed = true
 is_test_passed = true
