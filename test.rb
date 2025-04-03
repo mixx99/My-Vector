@@ -18,10 +18,10 @@ else
   MAX_NUMBER = 10000 # maximum number in test
 end
 
-if(options[:valgrind])
-  VALGRIND = 1
+if(!options[:valgrind])
+  VALGRIND = false
 else
-  VALGRIND = 0
+  VALGRIND = true
 end
 
 puts "Generating tests"
@@ -48,7 +48,7 @@ all_tests_passed = true
 is_test_passed = true
 while a <= TEST_NUMBER do
   puts("----------TEST ##{a}--------------------")
-  if(system("./a.out < ./tests/test#{a}.input") == 0)
+  if(system((if VALGRIND then "valgrind " else "" end) + "./a.out < ./tests/test#{a}.input") == 0)
     all_tests_passed = false
     is_test_passed = false
   end
